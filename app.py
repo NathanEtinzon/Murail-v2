@@ -42,7 +42,7 @@ ANIMATOR_PASSWORD  = os.environ.get("ANIMATOR_PASSWORD", "changeme_animator")
 OBSERVER_PASSWORD  = os.environ.get("OBSERVER_PASSWORD", "changeme_observer")
 APP_ID             = os.environ.get("APP_ID", "REMPAR-DEMO-LOCAL")
 TRACKING           = os.environ.get("TRACKING", "")
-DEBUG           = os.environ.get("DEBUG", "False")
+DEBUG = os.environ.get("DEBUG", "false").strip().lower() in ("1", "true", "yes", "on")
 ENABLE_PMS = os.environ.get("ENABLE_PMS", "false").strip().lower() in ("1", "true", "yes", "on")
 TZ = os.getenv("TZ", "Europe/Paris")
 APP_TZ = gettz(TZ)
@@ -69,19 +69,24 @@ DECOMPTE_EVENTS: List[Dict[str, Any]] = []  # {start: datetime, end: datetime, m
 
 I18N_DIR = Path(__file__).parent / "i18n"
 SUPPORTED_LANGS = {"fr", "en"}
-DEFAULT_LANG = os.getenv("LANG", "fr").lower()
+
+def normalize_lang(value: Optional[str], fallback: str = "fr") -> str:
+    txt = (value or "").strip().lower()
+    if not txt:
+        return fallback
+    txt = txt.split(",", 1)[0].split(";", 1)[0].split(".", 1)[0].replace("_", "-")
+    primary = txt.split("-", 1)[0]
+    return primary if primary in SUPPORTED_LANGS else fallback
+
+DEFAULT_LANG = normalize_lang(os.getenv("LANG", "fr"))
 
 def detect_lang_from_header() -> str:
-    header = (request.headers.get("Accept-Language") or "").lower()
-    if header.startswith("en"):
-        return "en"
-    return DEFAULT_LANG
+    header = request.headers.get("Accept-Language")
+    return normalize_lang(header, DEFAULT_LANG)
 
 def get_lang() -> str:
     lang = session.get("language") or request.cookies.get("language")
-    if lang in SUPPORTED_LANGS:
-        return lang
-    return detect_lang_from_header()
+    return normalize_lang(lang, detect_lang_from_header())
 
 # --- File loading with mtime-aware cache (auto reloads when files change) ---
 @lru_cache(maxsize=None)
@@ -91,10 +96,10 @@ def _read_translation(lang: str, mtime: float) -> dict:
         return json.load(f)
 
 def load_translation(lang: str) -> dict:
-    lang = lang if lang in SUPPORTED_LANGS else DEFAULT_LANG
+    lang = normalize_lang(lang, DEFAULT_LANG)
     path = I18N_DIR / f"{lang}.json"
     if not path.exists():
-        lang = DEFAULT_LANG
+        lang = "fr"
     path = I18N_DIR / f"{lang}.json"
     mtime = path.stat().st_mtime
     return _read_translation(lang, mtime)
@@ -145,15 +150,20 @@ def add_no_cache_headers(response):
     response.headers["Expires"] = "0"
     return response
 
-def get_active_decompte_end(now: Optional[datetime] = None) -> Optional[datetime]:
-    """If a decompte is active (start <= now < end) return its end datetime, else None."""
+def get_active_decompte(now: Optional[datetime] = None) -> Optional[Dict[str, Any]]:
+    """If a decompte is active (start <= now < end), return its event data."""
     if now is None:
         now = datetime.now(tz=APP_TZ)
     with STATE_LOCK:
         for ev in DECOMPTE_EVENTS:
             if ev["start"] <= now < ev["end"]:
-                return ev["end"]
+                return dict(ev)
     return None
+
+def get_active_decompte_end(now: Optional[datetime] = None) -> Optional[datetime]:
+    """If a decompte is active (start <= now < end) return its end datetime, else None."""
+    active = get_active_decompte(now)
+    return active["end"] if active else None
 
 # --- NEW: small helper to format the SSE event for current décompte state
 def _sse_decompte_event():
@@ -162,12 +172,31 @@ def _sse_decompte_event():
       - ("decompte", {"target_iso": ...}) when a countdown is active
       - ("decompte_end", {}) when no countdown is active
     """
-    end_dt = get_active_decompte_end()
-    if end_dt:
-        payload = app.json.dumps({"target_iso": end_dt.astimezone(APP_TZ).isoformat()})
+    active = get_active_decompte()
+    if active:
+        payload = app.json.dumps({
+            "target_iso": active["end"].astimezone(APP_TZ).isoformat(),
+            "commentaire": active.get("commentaire", ""),
+        })
         return ("decompte", payload)
     else:
         return ("decompte_end", app.json.dumps({}))
+
+def _decompte_state_key(active: Optional[Dict[str, Any]]) -> str:
+    if not active:
+        return "none"
+    return "|".join([
+        active["start"].isoformat(),
+        active["end"].isoformat(),
+        active.get("commentaire", ""),
+    ])
+
+def render_countdown(active: Dict[str, Any]):
+    return render_template(
+        "countdown.html",
+        target_iso=active["end"].astimezone(APP_TZ).isoformat(),
+        countdown_message=active.get("commentaire", ""),
+    )
 
 def norm(s: Optional[str]) -> str:
     if s is None:
@@ -384,7 +413,8 @@ def load_excel(file_like) -> None:
                 decompte_events.append({
                     "start": start,
                     "end": end,
-                    "minutes": minutes
+                    "minutes": minutes,
+                    "commentaire": raw.get("commentaire", ""),
                 })
                 continue
 
@@ -500,9 +530,9 @@ def reset():
 @app.route("/")
 def index():
     # If a decompte is active, show countdown instead of normal index
-    end_dt = get_active_decompte_end()
-    if end_dt:
-        return render_template("countdown.html", target_iso=end_dt.astimezone(APP_TZ).isoformat())
+    active_decompte = get_active_decompte()
+    if active_decompte:
+        return render_countdown(active_decompte)
 
     with STATE_LOCK:
         n_tw = len(TWEETS)
@@ -588,17 +618,17 @@ def admin():
 @app.route("/socialmedia")
 def socialmedia():
     # Force countdown if active
-    end_dt = get_active_decompte_end()
-    if end_dt:
-        return render_template("countdown.html", target_iso=end_dt.astimezone(APP_TZ).isoformat())
+    active_decompte = get_active_decompte()
+    if active_decompte:
+        return render_countdown(active_decompte)
     return render_template("socialmedia.html")
 
 @app.route("/messagerie", methods=["GET", "POST"])
 def messagerie():
     # Force countdown if active
-    end_dt = get_active_decompte_end()
-    if end_dt:
-        return render_template("countdown.html", target_iso=end_dt.astimezone(APP_TZ).isoformat())
+    active_decompte = get_active_decompte()
+    if active_decompte:
+        return render_countdown(active_decompte)
 
     if request.method == "POST":
         role = request.form.get("role")
@@ -770,8 +800,8 @@ def stream_tweets():
         # Stream new tweets + decompte state changes
         while True:
             # Emit decompte updates if changed
-            end_dt = get_active_decompte_end()
-            key = end_dt.isoformat() if end_dt else "none"
+            active_decompte = get_active_decompte()
+            key = _decompte_state_key(active_decompte)
             if key != last_decompte_key:
                 last_decompte_key = key
                 ev, data = _sse_decompte_event()
@@ -849,8 +879,8 @@ def stream_messages():
         # new messages + decompte changes
         while True:
             # Emit decompte updates if changed
-            end_dt = get_active_decompte_end()
-            key = end_dt.isoformat() if end_dt else "none"
+            active_decompte = get_active_decompte()
+            key = _decompte_state_key(active_decompte)
             if key != last_decompte_key:
                 last_decompte_key = key
                 ev, data = _sse_decompte_event()

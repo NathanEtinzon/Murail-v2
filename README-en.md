@@ -3,6 +3,8 @@
 # Mur@il
 Crisis simulation platform inspired by the **REMPAR25** exercise by **ANSSI**
 
+This repository is a fork of the original [JMousqueton/Murail](https://github.com/JMousqueton/Murail) project.
+
 # Crisis Simulation – Exercise Inspired by REMPAR25
 
 ## 📌 Context
@@ -85,7 +87,7 @@ The Excel file `chronogramme.xlsx` must contain at least the following columns:
 - `destinataire` : recipient role(s) (or `tous` for broadcast). *Support for multi-recipient messages with line breaks.*
 - `stimuli` : message content.
 - `reaction attendue` *(optional)* : expected team response.
-- `commentaire` *(optional)* : note for the animator.
+- `commentaire` *(optional)* : note for the animator. For a `decompte`, this text is displayed under the countdown and is therefore visible to participants.
 - `livrable` *(optional)* : expected deliverable (press release, report, etc.).
 
 **Supported types:**
@@ -118,11 +120,16 @@ The Excel file `pms.xlsx` must contain at least the following columns:
 - Better handling of Excel formats and timezones.
 - Automatic support for variable time formats (`HH:MM`, `HH:MM:SS`, etc.).
 
+### Countdowns
+- Optional message displayed under the countdown from the Chronogramme `Commentaire` column.
+- Automatic home page refresh so active countdowns appear without manual reload.
+
 ### Technical Improvements
 - Pinned dependency versions (`requirements.txt`)
 - Improved locking mechanism (threading) for shared structures.
 - Complete i18n support with translations for new keys.
 - No-cache headers to prevent SSE caching issues.
+- System language normalization (`fr_FR.UTF-8`, `en_US.UTF-8`) and explicit `.env` loading with Docker Compose.
 
 ---
 
@@ -214,6 +221,9 @@ cp env.example .env
 # 2. Launch the application
 docker-compose up -d
 
+# After modifying .env, recreate the container to apply variables
+docker-compose up -d --force-recreate
+
 # 3. View logs
 docker-compose logs -f
 
@@ -276,7 +286,7 @@ For production deployment, consider:
 - Use a reverse proxy (nginx, Traefik)
 - Enable HTTPS with Let's Encrypt
 - Configure strong passwords
-- Disable `DEBUG=false` and `DEMO=false`
+- Keep `DEBUG=false` and `DEMO=false`
 - Limit network access with firewall rules
 
 ---
@@ -321,5 +331,6 @@ Project distributed under GNU license.
 
 ## 🙏 Acknowledgments
 
+- **JMousqueton/Murail** for the original project this repository is forked from.
 - **ANSSI** for organizing **REMPAR25**, which inspired this platform.
 - All contributors who enrich large-scale cybersecurity exercises.

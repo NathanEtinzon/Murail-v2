@@ -3,6 +3,8 @@
 # Mur@il
 Plateforme de simulation de crise inspirée de l’exercice massifié REMPAR25 de l’ANSSI
 
+Ce dépôt est un fork du projet original [JMousqueton/Murail](https://github.com/JMousqueton/Murail).
+
 # Simulation de crise – Exercice inspiré de REMPAR25
 
 ## 📌 Contexte
@@ -85,7 +87,7 @@ Le fichier Excel `chronogramme.xlsx` doit contenir au minimum les colonnes suiva
 - `destinataire` : rôle(s) concerné(s) (ou `tous` pour diffusion générale). *Support multi-destinataires sur plusieurs lignes.*
 - `stimuli` : contenu du message.
 - `reaction attendue` *(optionnel)* : ce qui est attendu de l'équipe.
-- `commentaire` *(optionnel)* : note pour l'animateur.
+- `commentaire` *(optionnel)* : note pour l'animateur. Pour un `decompte`, ce texte est affiché sous le compte à rebours et devient donc visible par les participants.
 - `livrable` *(optionnel)* : sortie attendue (communiqué, rapport, etc.).
 
 **Types supportés :**
@@ -118,11 +120,16 @@ Le fichier Excel `pms.xlsx` doit contenir au minimum les colonnes suivantes :
 - Meilleure gestion des formats Excel et des fuseaux horaires
 - Support automatique de formats d'heure variables (`HH:MM`, `HH:MM:SS`, etc.)
 
+### Décomptes
+- Affichage possible d'un message sous le compte à rebours depuis la colonne `Commentaire` du chronogramme.
+- Rafraîchissement automatique de la page d'accueil pour basculer vers un décompte actif sans action manuelle.
+
 ### Améliorations techniques
 - Pinning des versions des dépendances (`requirements.txt`)
 - Gestion améliorée des verrous (threading) pour les structures partagées
 - Support i18n complet avec traduction des nouvelles clés
 - Headers no-cache pour éviter les problèmes de mise en cache des SSE
+- Normalisation des langues système (`fr_FR.UTF-8`, `en_US.UTF-8`) et chargement explicite du `.env` avec Docker Compose.
 
 ---
 
@@ -213,6 +220,9 @@ cp env.example .env
 # 2. Lancer l'application
 docker-compose up -d
 
+# Après modification du .env, recréer le conteneur pour appliquer les variables
+docker-compose up -d --force-recreate
+
 # 3. Voir les logs
 docker-compose logs -f
 
@@ -275,7 +285,7 @@ Pour un déploiement en production, considérer :
 - Utiliser un reverse proxy (nginx, Traefik)
 - Activer HTTPS avec Let's Encrypt
 - Configurer des mots de passe forts
-- Désactiver `DEBUG=false` et `DEMO=false`
+- Conserver `DEBUG=false` et `DEMO=false`
 - Limiter l'accès réseau avec des règles firewall
 
 ---
@@ -319,5 +329,6 @@ Projet distribué sous licence GNU.
 
 ## 🙏 Remerciements
 
+- **JMousqueton/Murail** pour le projet original dont ce dépôt est un fork.
 - **ANSSI** pour l’organisation de **REMPAR25**, qui a inspiré cette plateforme.  
 - Tous les contributeurs qui enrichissent les exercices de cybersécurité massifiés.

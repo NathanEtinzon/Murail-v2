@@ -148,6 +148,34 @@
     </div>
 
     {{ TRACKING | safe }}
+    <script>
+      (function () {
+        const refreshDelayMs = 60 * 1000;
+
+        setInterval(() => {
+          if (document.visibilityState === "visible") {
+            window.location.reload();
+          }
+        }, refreshDelayMs);
+
+        document.addEventListener("visibilitychange", () => {
+          if (document.visibilityState === "visible") {
+            window.location.reload();
+          }
+        });
+
+        try {
+          const evt = new EventSource("{{ url_for('stream_tweets') }}");
+          evt.addEventListener("decompte", (e) => {
+            try {
+              const { target_iso } = JSON.parse(e.data || "{}");
+              if (target_iso) window.location.reload();
+            } catch (_) {}
+          });
+          evt.addEventListener("ping", () => {});
+        } catch (_) {}
+      })();
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
   </body>
 </html>

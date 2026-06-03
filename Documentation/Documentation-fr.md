@@ -1,5 +1,7 @@
 # 📄 Documentation
 
+Ce dépôt est un fork du projet original [JMousqueton/Murail](https://github.com/JMousqueton/Murail).
+
 ## 📂 Structure des fichiers Excel
 
 La plateforme utilise maintenant **deux fichiers Excel distincts** :
@@ -97,6 +99,7 @@ Ces colonnes sont uniquement à destination du rôle d'animateur/facilitateur.
 
 #### `Commentaire`
 - Informations complémentaires destinées aux animateurs de l'exercice.
+- Pour un `decompte`, le contenu de cette cellule est affiché sous le compte à rebours sur les interfaces participants. N'y placez pas de consigne interne, de donnée sensible ou d'information réservée à l'animation.
 
 #### `Livrable`
 - Indique un document attendu (exemple : *"Rédiger un communiqué de presse"*).
@@ -173,6 +176,7 @@ L'application propose plusieurs interfaces web permettant aux participants et au
   - Le statut du scénario (chargé ou vide).
   - Les **5 derniers événements** déclenchés (messages uniquement).
 - Sert de point d'entrée pour les participants.
+- La page se rafraîchit automatiquement toutes les minutes et écoute les événements de décompte en temps réel afin d'afficher un compte à rebours actif sans rafraîchissement manuel.
 
 ![Accueil](img/accueil.png)
 
@@ -262,6 +266,8 @@ L'application propose plusieurs interfaces web permettant aux participants et au
   - Les interfaces du joueur (Messagerie et Médias Sociaux) basculent automatiquement vers une **page de compte à rebours plein écran**.
   - La page d'accueil affiche aussi le décompte.
   - Le minuteur s'affiche avec un effet lumineux rouge.
+  - Si la colonne `Commentaire` est renseignée dans le chronogramme, son contenu est affiché sous le minuteur.
+  - La page d'accueil se rafraîchit automatiquement et réagit aux événements SSE pour détecter les décomptes actifs.
   - À la fin du décompte, les interfaces Messagerie et Réseaux Sociaux reviennent à la normale automatiquement.
 
 ![Decompte](img/decompte.png)
@@ -288,6 +294,7 @@ Il contient les paramètres sensibles (mots de passe, identifiants, secrets) et 
   - Générer une clé : `python3 -c "import secrets; print(secrets.token_hex(32))"`
 - **`TZ`** : fuseau horaire de l'application (par défaut : `Europe/Paris`).
 - **`LANG`** : langue par défaut (par défaut : `fr` pour français, ou `en` pour anglais).
+  - Les formats système courants comme `fr_FR.UTF-8` ou `en_US.UTF-8` sont normalisés automatiquement.
 - **`PORT`** : port d'écoute de l'application (par défaut : `5000`).
 
 #### Fichiers scénarios
@@ -306,6 +313,12 @@ Il contient les paramètres sensibles (mots de passe, identifiants, secrets) et 
    - Exemple typique : un script Matomo hébergé sur un serveur interne.
 
 👉 **Conseil sécurité** : ne jamais partager publiquement le contenu réel du fichier `.env` (surtout les mots de passe et `FLASK_SECRET`).
+
+Avec Docker Compose, le fichier `.env` est chargé explicitement. Après modification d'une variable sensible ou applicative, recréez le conteneur pour appliquer les changements :
+
+```bash
+docker-compose up -d --force-recreate
+```
 
 ---
 

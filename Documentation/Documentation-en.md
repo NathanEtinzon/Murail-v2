@@ -1,5 +1,7 @@
 # 📄 Documentation
 
+This repository is a fork of the original [JMousqueton/Murail](https://github.com/JMousqueton/Murail) project.
+
 ## 📂 Excel File Structure
 
 The platform now uses **two separate Excel files**:
@@ -97,6 +99,7 @@ These columns are intended for the **animator/facilitator** role only.
 
 #### `Commentaire` (Comment)
 - Additional information for the exercise facilitators.
+- For a `decompte`, the content of this cell is displayed under the countdown on participant interfaces. Do not put internal instructions, sensitive data, or facilitator-only information there.
 
 #### `Livrable` (Deliverable)
 - Indicates an expected document.
@@ -174,6 +177,7 @@ The application offers several web interfaces allowing participants and facilita
   - Scenario status (loaded or empty).
   - The **last 5 events** triggered (messages only).
 - Serves as the entry point for participants.
+- The page refreshes automatically every minute and listens for countdown events in real time so an active countdown can appear without manual reload.
 
 ![Home](img/accueil.png)
 
@@ -263,6 +267,8 @@ The application offers several web interfaces allowing participants and facilita
   - Player interfaces (Messaging and Social Media) automatically switch to a **full-screen countdown page**.
   - The home page also displays the countdown.
   - The timer is displayed with a red glowing effect.
+  - If the `Commentaire` column is filled in the Chronogramme, its content is displayed under the timer.
+  - The home page refreshes automatically and reacts to SSE events to detect active countdowns.
   - After the countdown ends, the Messaging and Social Media interfaces return to normal automatically.
 
 ![Countdown](img/decompte.png)
@@ -289,6 +295,7 @@ It contains sensitive parameters (passwords, identifiers, secrets) and file path
   - Generate a key: `python3 -c "import secrets; print(secrets.token_hex(32))"`
 - **`TZ`** : application timezone (default: `Europe/Paris`).
 - **`LANG`** : default language (default: `fr` for French, or `en` for English).
+  - Common system formats such as `fr_FR.UTF-8` or `en_US.UTF-8` are normalized automatically.
 - **`PORT`** : application listening port (default: `5000`).
 
 #### Scenario Files
@@ -307,6 +314,12 @@ It contains sensitive parameters (passwords, identifiers, secrets) and file path
    - Typical example: a Matomo script hosted on an internal server.
 
 👉 **Security tip**: never share the actual content of the `.env` file publicly (especially passwords and `FLASK_SECRET`).
+
+With Docker Compose, the `.env` file is loaded explicitly. After changing a sensitive or application variable, recreate the container to apply the new values:
+
+```bash
+docker-compose up -d --force-recreate
+```
 
 ---
 
