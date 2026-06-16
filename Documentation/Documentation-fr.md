@@ -99,7 +99,7 @@ Ces colonnes sont uniquement à destination du rôle d'animateur/facilitateur.
 
 #### `Commentaire`
 - Informations complémentaires destinées aux animateurs de l'exercice.
-- Pour un `decompte`, le contenu de cette cellule est affiché sous le compte à rebours sur les interfaces participants. N'y placez pas de consigne interne, de donnée sensible ou d'information réservée à l'animation.
+- Pour un `decompte`, le contenu de cette cellule est affiché sous le compte à rebours sur la page d'accueil. N'y placez pas de consigne interne, de donnée sensible ou d'information réservée à l'animation.
 
 #### `Livrable`
 - Indique un document attendu (exemple : *"Rédiger un communiqué de presse"*).
@@ -176,7 +176,7 @@ L'application propose plusieurs interfaces web permettant aux participants et au
   - Le statut du scénario (chargé ou vide).
   - Les **5 derniers événements** déclenchés (messages uniquement).
 - Sert de point d'entrée pour les participants.
-- La page se rafraîchit automatiquement toutes les minutes et écoute les événements de décompte en temps réel afin d'afficher un compte à rebours actif sans rafraîchissement manuel.
+- La page se rafraîchit automatiquement toutes les 30 secondes et écoute les événements de décompte en temps réel afin d'afficher un compte à rebours actif sans rafraîchissement manuel.
 
 ![Accueil](img/accueil.png)
 
@@ -263,12 +263,12 @@ L'application propose plusieurs interfaces web permettant aux participants et au
 ### ⏳ Décompte
 
 - Lorsque le scénario contient un stimulus de type **`decompte`** :
-  - Les interfaces du joueur (Messagerie et Médias Sociaux) basculent automatiquement vers une **page de compte à rebours plein écran**.
-  - La page d'accueil affiche aussi le décompte.
+  - Seule la page d'accueil affiche le **compte à rebours plein écran**.
+  - Les interfaces Messagerie et Médias Sociaux restent sur leur affichage nominal.
   - Le minuteur s'affiche avec un effet lumineux rouge.
   - Si la colonne `Commentaire` est renseignée dans le chronogramme, son contenu est affiché sous le minuteur.
-  - La page d'accueil se rafraîchit automatiquement et réagit aux événements SSE pour détecter les décomptes actifs.
-  - À la fin du décompte, les interfaces Messagerie et Réseaux Sociaux reviennent à la normale automatiquement.
+  - La page d'accueil se rafraîchit automatiquement toutes les 30 secondes et réagit aux événements SSE pour détecter les décomptes actifs.
+  - À la fin du décompte, la page d'accueil revient à son affichage normal automatiquement.
 
 ![Decompte](img/decompte.png)
 

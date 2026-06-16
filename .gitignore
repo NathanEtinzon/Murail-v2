@@ -204,6 +204,7 @@ cython_debug/
 
 .DS_Store
 Sample/~$chronogramme.xlsx
+Sample/chronogramme.xlsx
 .github/copilot-instructions.md
 Sample/OLDchronogramme.xlsx
 Sample/~$PMS.xlsx

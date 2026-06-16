@@ -87,7 +87,7 @@ Le fichier Excel `chronogramme.xlsx` doit contenir au minimum les colonnes suiva
 - `destinataire` : rôle(s) concerné(s) (ou `tous` pour diffusion générale). *Support multi-destinataires sur plusieurs lignes.*
 - `stimuli` : contenu du message.
 - `reaction attendue` *(optionnel)* : ce qui est attendu de l'équipe.
-- `commentaire` *(optionnel)* : note pour l'animateur. Pour un `decompte`, ce texte est affiché sous le compte à rebours et devient donc visible par les participants.
+- `commentaire` *(optionnel)* : note pour l'animateur. Pour un `decompte`, ce texte est affiché sous le compte à rebours sur la page d'accueil et devient donc visible par les participants.
 - `livrable` *(optionnel)* : sortie attendue (communiqué, rapport, etc.).
 
 **Types supportés :**
@@ -122,7 +122,7 @@ Le fichier Excel `pms.xlsx` doit contenir au minimum les colonnes suivantes :
 
 ### Décomptes
 - Affichage possible d'un message sous le compte à rebours depuis la colonne `Commentaire` du chronogramme.
-- Rafraîchissement automatique de la page d'accueil pour basculer vers un décompte actif sans action manuelle.
+- Rafraîchissement automatique de la page d'accueil toutes les 30 secondes pour basculer vers un décompte actif sans action manuelle.
 
 ### Améliorations techniques
 - Pinning des versions des dépendances (`requirements.txt`)

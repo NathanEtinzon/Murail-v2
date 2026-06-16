@@ -617,19 +617,10 @@ def admin():
 
 @app.route("/socialmedia")
 def socialmedia():
-    # Force countdown if active
-    active_decompte = get_active_decompte()
-    if active_decompte:
-        return render_countdown(active_decompte)
     return render_template("socialmedia.html")
 
 @app.route("/messagerie", methods=["GET", "POST"])
 def messagerie():
-    # Force countdown if active
-    active_decompte = get_active_decompte()
-    if active_decompte:
-        return render_countdown(active_decompte)
-
     if request.method == "POST":
         role = request.form.get("role")
         if role not in ROLES:

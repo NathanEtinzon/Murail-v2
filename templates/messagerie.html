@@ -318,13 +318,6 @@
           }
           if (added > 0) playNotification();
         });
-        evt.addEventListener('decompte', (e) => {
-          try {
-            const { target_iso } = JSON.parse(e.data || "{}");
-            if (target_iso) window.location.replace("/");
-          } catch {}
-        });
-        evt.addEventListener('decompte_end', () => {});
         evt.addEventListener('ping', () => {});
         evt.onerror = () => {};
       })();

@@ -99,7 +99,7 @@ These columns are intended for the **animator/facilitator** role only.
 
 #### `Commentaire` (Comment)
 - Additional information for the exercise facilitators.
-- For a `decompte`, the content of this cell is displayed under the countdown on participant interfaces. Do not put internal instructions, sensitive data, or facilitator-only information there.
+- For a `decompte`, the content of this cell is displayed under the countdown on the home page. Do not put internal instructions, sensitive data, or facilitator-only information there.
 
 #### `Livrable` (Deliverable)
 - Indicates an expected document.
@@ -177,7 +177,7 @@ The application offers several web interfaces allowing participants and facilita
   - Scenario status (loaded or empty).
   - The **last 5 events** triggered (messages only).
 - Serves as the entry point for participants.
-- The page refreshes automatically every minute and listens for countdown events in real time so an active countdown can appear without manual reload.
+- The page refreshes automatically every 30 seconds and listens for countdown events in real time so an active countdown can appear without manual reload.
 
 ![Home](img/accueil.png)
 
@@ -264,12 +264,12 @@ The application offers several web interfaces allowing participants and facilita
 ### ⏳ Countdown
 
 - When the scenario contains a **`decompte`** stimulus:
-  - Player interfaces (Messaging and Social Media) automatically switch to a **full-screen countdown page**.
-  - The home page also displays the countdown.
+  - Only the home page displays the **full-screen countdown**.
+  - Messaging and Social Media interfaces keep their normal display.
   - The timer is displayed with a red glowing effect.
   - If the `Commentaire` column is filled in the Chronogramme, its content is displayed under the timer.
-  - The home page refreshes automatically and reacts to SSE events to detect active countdowns.
-  - After the countdown ends, the Messaging and Social Media interfaces return to normal automatically.
+  - The home page refreshes automatically every 30 seconds and reacts to SSE events to detect active countdowns.
+  - After the countdown ends, the home page returns to its normal display automatically.
 
 ![Countdown](img/decompte.png)
 

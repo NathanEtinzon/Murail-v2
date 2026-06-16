@@ -524,9 +524,6 @@
           const payload=JSON.parse(e.data);
           if(Array.isArray(payload)) for(const t of payload) enqueueTweet(t);
         }catch{}};
-        evt.addEventListener('decompte',(e)=>{try{
-          const{target_iso}=JSON.parse(e.data||"{}");if(target_iso)window.location.replace("/");
-        }catch{}});
       }
 
       // ====== BOOT ======

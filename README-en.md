@@ -87,7 +87,7 @@ The Excel file `chronogramme.xlsx` must contain at least the following columns:
 - `destinataire` : recipient role(s) (or `tous` for broadcast). *Support for multi-recipient messages with line breaks.*
 - `stimuli` : message content.
 - `reaction attendue` *(optional)* : expected team response.
-- `commentaire` *(optional)* : note for the animator. For a `decompte`, this text is displayed under the countdown and is therefore visible to participants.
+- `commentaire` *(optional)* : note for the animator. For a `decompte`, this text is displayed under the countdown on the home page and is therefore visible to participants.
 - `livrable` *(optional)* : expected deliverable (press release, report, etc.).
 
 **Supported types:**
@@ -122,7 +122,7 @@ The Excel file `pms.xlsx` must contain at least the following columns:
 
 ### Countdowns
 - Optional message displayed under the countdown from the Chronogramme `Commentaire` column.
-- Automatic home page refresh so active countdowns appear without manual reload.
+- Automatic home page refresh every 30 seconds so active countdowns appear without manual reload.
 
 ### Technical Improvements
 - Pinned dependency versions (`requirements.txt`)
