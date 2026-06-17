@@ -19,25 +19,6 @@
 
       .tw-header { position: sticky; top: 0; z-index: 10; backdrop-filter: blur(6px); background: rgba(0,0,0,.4); border-bottom: 1px solid var(--cc-border); }
 
-      /* Bandeau d'alerte */
-      .alert-banner{
-        border: 1px solid #dc3545;
-        background: rgba(220,53,69,.10);
-        color: #ff4d4f;
-        border-radius: .75rem;
-        text-align: center;
-        padding: .6rem 1rem;
-        margin: .75rem auto 1.5rem;
-        max-width: 720px;
-        font-weight: 700;
-        letter-spacing: .06em;
-      }
-      .alert-sticky{
-        position: sticky;
-        top: var(--header-h, 56px);
-        z-index: 9;  /* header est z-index:10 */
-      }
-
       /* Filtre actif (pill) */
       .filter-chip {
         display:none; gap:.5rem; align-items:center; justify-content:center;
@@ -95,13 +76,6 @@
             <div class="small-muted" id="clock"></div>
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- Bandeau central sous l’en-tête -->
-    <div class="container-fluid">
-      <div class="alert-banner alert-sticky" role="status" aria-live="polite">
-        Exercice-Exercice-Exercice
       </div>
     </div>
 

@@ -93,7 +93,7 @@ href="data:image/svg+xml,
 
       // Also listen to SSE in case the server tells us the décompte ended
       try {
-        const evt = new EventSource("{{ url_for('stream_tweets') }}");
+        const evt = new EventSource("{{ url_for('stream_decompte') }}");
         evt.addEventListener("decompte_end", () => window.location.replace(returnTo));
       } catch (_) {}
     })();

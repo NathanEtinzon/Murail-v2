@@ -759,18 +759,30 @@ def stream_animateur():
 
     return app.response_class(gen(), mimetype="text/event-stream")
 
+@app.route("/stream_decompte")
+def stream_decompte():
+    def gen():
+        yield "event: ping\ndata: {}\n\n"
+
+        last_decompte_key = None
+        while True:
+            active_decompte = get_active_decompte()
+            key = _decompte_state_key(active_decompte)
+            if key != last_decompte_key:
+                last_decompte_key = key
+                ev, data = _sse_decompte_event()
+                yield f"event: {ev}\ndata: {data}\n\n"
+            time.sleep(1)
+
+    return app.response_class(gen(), mimetype="text/event-stream")
+
 @app.route("/stream_tweets")
 def stream_tweets():
     def gen():
         yield "event: ping\ndata: {}\n\n"
         yield f"event: socialmedia_state\ndata: {app.json.dumps({'run_id': SERVER_RUN_ID})}\n\n"
 
-        # Send decompte state on connect
-        ev, data = _sse_decompte_event()
-        yield f"event: {ev}\ndata: {data}\n\n"
-
         sent_ids = set()
-        last_decompte_key = None  # track state changes
 
         # Send past tweets
         now = datetime.now(tz=APP_TZ)
@@ -795,16 +807,8 @@ def stream_tweets():
             payload = app.json.dumps(due)
             yield f"event: tweet\ndata: {payload}\n\n"
 
-        # Stream new tweets + decompte state changes
+        # Stream new tweets
         while True:
-            # Emit decompte updates if changed
-            active_decompte = get_active_decompte()
-            key = _decompte_state_key(active_decompte)
-            if key != last_decompte_key:
-                last_decompte_key = key
-                ev, data = _sse_decompte_event()
-                yield f"event: {ev}\ndata: {data}\n\n"
-
             now = datetime.now(tz=APP_TZ)
             due = []
             with STATE_LOCK:
@@ -849,12 +853,7 @@ def stream_messages():
     def gen():
         yield "event: ping\ndata: {}\n\n"
 
-        # Send decompte state on connect
-        ev, data = _sse_decompte_event()
-        yield f"event: {ev}\ndata: {data}\n\n"
-
         sent_ids = set()
-        last_decompte_key = None
 
         # past messages
         now = datetime.now(tz=APP_TZ)
@@ -877,16 +876,8 @@ def stream_messages():
             payload = app.json.dumps(due)
             yield f"event: message\ndata: {payload}\n\n"
 
-        # new messages + decompte changes
+        # new messages
         while True:
-            # Emit decompte updates if changed
-            active_decompte = get_active_decompte()
-            key = _decompte_state_key(active_decompte)
-            if key != last_decompte_key:
-                last_decompte_key = key
-                ev, data = _sse_decompte_event()
-                yield f"event: {ev}\ndata: {data}\n\n"
-
             now = datetime.now(tz=APP_TZ)
             due = []
             with STATE_LOCK:

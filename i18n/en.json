@@ -113,8 +113,6 @@
   "mark_processed": "Mark as processed",
   "processed_badge": "✅ processed",
 
-  "exercise_banner": "EXERCISE - EXERCISE - EXERCISE",
-
   "title_observer": "Simulation - Observer",
   "badge_observer": "Observer",
   "notes_hint": "Take local notes in real time.",
@@ -144,7 +142,6 @@
   "title_social": "Simulation – Social media",
   "header_social": "Social media",
   "mobile_trends_toggle": "Trends",
-  "banner_exercise": "Exercise-Exercise-Exercise",
 
   "filter_active_prefix": "Active filter: #",
   "filter_clear_aria": "Clear filter",

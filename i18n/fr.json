@@ -112,8 +112,6 @@
   "mark_processed": "Marquer comme traité",
   "processed_badge": "✅ traité",
 
-  "exercise_banner": "EXERCICE - EXERCICE - EXERCICE",
-
   "title_observer": "Simulation - Observateur",
   "badge_observer": "Observateur",
   "notes_hint": "Prenez des notes localement, en temps réel.",
@@ -143,7 +141,6 @@
   "title_social": "Simulation – Réseaux sociaux",
   "header_social": "Réseaux sociaux",
   "mobile_trends_toggle": "Tendances",
-  "banner_exercise": "Exercice-Exercice-Exercice",
 
   "filter_active_prefix": "Filtre actif : #",
   "filter_clear_aria": "Retirer le filtre",
