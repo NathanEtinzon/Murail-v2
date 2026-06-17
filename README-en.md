@@ -48,6 +48,7 @@ It can be used for trainings, role-playing sessions, or crisis management exerci
 - Dynamic engagement (likes, retweets) evolves automatically.
 - Detection and display of trending **hashtags**.
 - Option to filter the timeline by hashtag.
+- Feed reset on application restart: PMS tweets already due before the current startup are not replayed.
 
 ### ✉️ Internal Messaging
 - **Webmail** view with user role selection.

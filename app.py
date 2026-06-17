@@ -4,6 +4,7 @@ from __future__ import annotations
 import io
 import os
 import re
+import secrets
 import threading
 import time
 from datetime import datetime, date, timedelta
@@ -41,11 +42,13 @@ ADMIN_PASSWORD     = os.environ.get("ADMIN_PASSWORD", "changeme_admin")
 ANIMATOR_PASSWORD  = os.environ.get("ANIMATOR_PASSWORD", "changeme_animator")
 OBSERVER_PASSWORD  = os.environ.get("OBSERVER_PASSWORD", "changeme_observer")
 APP_ID             = os.environ.get("APP_ID", "REMPAR-DEMO-LOCAL")
+SERVER_RUN_ID      = secrets.token_hex(16)
 TRACKING           = os.environ.get("TRACKING", "")
 DEBUG = os.environ.get("DEBUG", "false").strip().lower() in ("1", "true", "yes", "on")
 ENABLE_PMS = os.environ.get("ENABLE_PMS", "false").strip().lower() in ("1", "true", "yes", "on")
 TZ = os.getenv("TZ", "Europe/Paris")
 APP_TZ = gettz(TZ)
+SERVER_STARTED_AT = datetime.now(tz=APP_TZ)
 
 UPLOAD_FOLDER = os.path.join("static", "images")
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
@@ -617,7 +620,7 @@ def admin():
 
 @app.route("/socialmedia")
 def socialmedia():
-    return render_template("socialmedia.html")
+    return render_template("socialmedia.html", socialmedia_run_id=SERVER_RUN_ID)
 
 @app.route("/messagerie", methods=["GET", "POST"])
 def messagerie():
@@ -760,6 +763,7 @@ def stream_animateur():
 def stream_tweets():
     def gen():
         yield "event: ping\ndata: {}\n\n"
+        yield f"event: socialmedia_state\ndata: {app.json.dumps({'run_id': SERVER_RUN_ID})}\n\n"
 
         # Send decompte state on connect
         ev, data = _sse_decompte_event()
@@ -774,6 +778,9 @@ def stream_tweets():
         with STATE_LOCK:
             for t in TWEETS:
                 if t["id"] in sent_ids:
+                    continue
+                if t["at"] < SERVER_STARTED_AT:
+                    sent_ids.add(t["id"])
                     continue
                 if t["at"] <= now:
                     due.append({
@@ -803,6 +810,9 @@ def stream_tweets():
             with STATE_LOCK:
                 for t in TWEETS:
                     if t["id"] in sent_ids:
+                        continue
+                    if t["at"] < SERVER_STARTED_AT:
+                        sent_ids.add(t["id"])
                         continue
                     if t["at"] <= now:
                         due.append({

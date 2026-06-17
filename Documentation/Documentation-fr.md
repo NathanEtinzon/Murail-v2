@@ -191,6 +191,7 @@ L'application propose plusieurs interfaces web permettant aux participants et au
   - Possibilité d'inclure des **images** dans les tweets via la syntaxe `[img nom.png]`.
   - Affichage dynamique du **nombre de retweets et de likes**, qui évoluent automatiquement.
   - Filtrage par hashtag actif → cliquer sur un sujet de tendance limite l'affichage aux tweets correspondants.
+  - Le fil est réinitialisé à chaque redémarrage de l'application : les tweets PMS déjà échus avant le démarrage courant ne sont pas rejoués.
 - Une horloge (heure de Paris) est visible en haut à droite.
 
 ![Réseaux sociaux](img/mediassociaux.png)

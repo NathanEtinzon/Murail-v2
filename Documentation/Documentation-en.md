@@ -192,6 +192,7 @@ The application offers several web interfaces allowing participants and facilita
   - Ability to include **images** in tweets using the `[img name.png]` syntax.
   - Dynamic display of **retweets and likes count**, which evolve automatically.
   - Active hashtag filtering → clicking on a trending topic limits display to matching tweets.
+  - The feed is reset on every application restart: PMS tweets already due before the current startup are not replayed.
 - A clock (Paris time) is visible in the top right.
 
 ![Social Media](img/mediassociaux.png)

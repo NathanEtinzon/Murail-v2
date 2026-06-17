@@ -48,6 +48,7 @@ Elle peut être utilisée lors de formations, de jeux de rôle ou d’exercices 
 - Engagement dynamique (likes, retweets) qui évoluent automatiquement.
 - Détection et affichage des **hashtags** tendances.
 - Possibilité de filtrer la timeline par hashtag.
+- Réinitialisation du fil au redémarrage de l'application : les tweets PMS déjà échus avant le démarrage courant ne sont pas rejoués.
 
 ### ✉️ Messagerie interne
 - Vue **webmail** avec sélection du profil utilisateur.
